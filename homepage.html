@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belle & Chic — Salon de Beauté</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Palette de couleurs raffinée */
+      --primary:    350 45% 65%;
+      --gold:       38  60% 65%;
+      --background: 30  25% 97%;
+      --foreground: 20  10% 15%;
+      --radius:     1.2rem;
+
+      --clr-primary:    hsl(var(--primary));
+      --clr-primary-d:  hsl(350 45% 55%);
+      --clr-primary-bg: hsl(350 45% 96%);
+      --clr-gold:       hsl(var(--gold));
+      --clr-bg:         hsl(var(--background));
+      --clr-fg:         hsl(var(--foreground));
+      --clr-muted:      hsl(20 8% 52%);
+      --clr-border:     hsl(30 20% 88%);
+      --clr-white:      #ffffff;
+
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Poppins', sans-serif;
+
+      --shadow-sm: 0 4px 20px hsla(20,10%,15%,.05);
+      --shadow-md: 0 12px 40px hsla(20,10%,15%,.08);
+      
+      /* Variables Glassmorphism */
+      --glass-bg: rgba(255, 255, 255, 0.65);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+      --glass-blur: blur(16px);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: linear-gradient(135deg, #fff0f3 0%, #fdfbf7 100%);
+      color: var(--clr-fg);
+      padding-top: 68px; /* Espace pour la navbar fixe */
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ════════════════════════════════════
+       ANIMATION BACKGROUND (DERIÈRE LES ITEMS)
+    ════════════════════════════════════ */
+    .bubbles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1; /* IMPORTANT: Derrière tout le contenu */
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -150px;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 182, 193, 0.4));
+      border-radius: 50%;
+      opacity: 0;
+      animation: rise linear infinite;
+      box-shadow: 0 0 20px rgba(255, 160, 180, 0.3);
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.4; }
+      100% { transform: translateY(-120vh) rotate(360deg) scale(1.2); opacity: 0; }
+    }
+
+    /* ════════════════════════════════════
+       EFFET GLASSER (GLASSMORPHISM) GLOBAL
+    ════════════════════════════════════ */
+    .glass-effect {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+
+    /* ════════════════════════════════════
+       NAVBAR — Fixed Glass
+    ════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 68px;
+      /* Application de l'effet glass */
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 60px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font-serif);
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--clr-fg); text-decoration: none;
+    }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--clr-primary), #ffb7c5);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
+    }
+
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      text-decoration: none; font-size: 0.95rem; font-weight: 500;
+      color: var(--clr-muted); letter-spacing: 0.02em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 2px; background: var(--clr-primary);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--clr-primary); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .btn-nav {
+      background: var(--clr-primary); color: white;
+      border: none; padding: 12px 30px; border-radius: 50px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-nav:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6); }
+
+    /* ════════════════════════════════════
+       HERO SECTION
+    ════════════════════════════════════ */
+    .hero {
+      position: relative;
+      height: calc(100vh - 68px);
+      min-height: 640px;
+      display: flex;
+      align-items: center;
+      padding: 0 60px;
+      overflow: hidden;
+    }
+     .hero-bg {
+      position: absolute;
+       inset: 0;
+      background: url('salon1.jfif') center/cover no-repeat;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        105deg,
+        hsla(20,12%,8%,.60) 0%,
+        hsla(20,12%,8%,.45) 50%,
+        hsla(20,12%,8%,.10) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 700px;
+      /* Petit effet glass sur le texte pour lisibilité si besoin, ou laisser transparent */
+    }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--clr-primary); font-weight: 700; margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 8px 16px; border-radius: 30px;
+      backdrop-filter: blur(5px);
+    }
+    .hero-tag::before { content: ''; width: 20px; height: 2px; background: var(--clr-primary); }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3.5rem, 6vw, 5rem);
+      line-height: 1.1;
+      color: var(--clr-white);
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+    .hero-title em { 
+      font-style: italic; 
+      color: var(--clr-primary); 
+      text-shadow: 2px 2px 0px rgba(183, 178, 179, 0.2);
+    }
+   
+
+    .hero-sub {
+      font-size: 1.2rem; color: var(--clr-white);
+      line-height: 1.8; margin-bottom: 40px;
+      max-width: 500px; font-weight: 300;
+    }
+
+    .hero-cta { display: flex; gap: 20px; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--clr-primary); color: white;
+      padding: 16px 36px; border-radius: 50px; font-size: 1rem;
+      font-weight: 500; text-decoration: none;
+      box-shadow: 0 4px 14px hsla(350,45%,65%,.35);
+      display: inline-flex; align-items: center; gap: 10px;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--clr-primary); transform: translateY(-3px); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.5); color: var(--clr-dark);
+      padding: 16px 36px; border-radius: 50px; font-size: 1rem;
+      font-weight: 500; text-decoration: none;
+      border: 1px solid rgba(0,0,0,0.1);
+      display: inline-flex; align-items: center; gap: 10px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+    .btn-ghost:hover { background: white; border-color: var(--clr-primary); color: var(--clr-primary); }
+
+    /* ════════════════════════════════════
+       SERVICES — Cartes Glass Modernes
+    ════════════════════════════════════ */
+    section { padding: 100px 60px; position: relative; z-index: 1; }
+
+    .section-header { text-align: center; margin-bottom: 70px; }
+    .section-eyebrow {
+      font-size: 0.75rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--clr-primary);
+      font-weight: 700; margin-bottom: 12px; display: block;
+    }
+    .section-title {
+      font-family: var(--font-serif); font-size: 3rem;
+      color: var(--clr-dark); font-weight: 700; margin-bottom: 16px;
+    }
+    .section-subtitle {
+      color: var(--clr-muted); font-size: 1.1rem;
+      max-width: 550px; margin: 0 auto;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+
+    .service-card {
+      /* GLASS EFFECT APPLIED HERE */
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 24px;
+      padding: 40px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 40px rgba(255, 105, 180, 0.15);
+      border-color: var(--clr-primary);
+    }
+
+    .service-head {
+      display: flex; align-items: center; gap: 18px;
+      margin-bottom: 30px; padding-bottom: 20px;
+      border-bottom: 1px dashed rgba(0,0,0,0.1);
+    }
+
+    .svc-icon {
+      width: 60px; height: 60px;
+      background: white;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--clr-primary);
+      box-shadow: 0 8px 20px rgba(255, 105, 180, 0.15);
+    }
+    .svc-icon svg { width: 28px; height: 28px; }
+
+    .svc-title {
+      font-family: var(--font-serif); font-size: 1.5rem;
+      font-weight: 700; color: var(--clr-dark);
+    }
+
+    .svc-list { list-style: none; }
+    .svc-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; font-size: 1rem; color: var(--clr-fg);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .svc-item:last-child { border-bottom: none; }
+    .svc-price { 
+      color: var(--clr-primary); font-weight: 700; font-size: 1.1rem; 
+      background: rgba(255, 182, 193, 0.15);
+      padding: 4px 12px; border-radius: 20px;
+    }
+
+    /* ════════════════════════════════════
+       RESERVATION — Form Glass
+    ════════════════════════════════════ */
+    #reservation {
+      /* Fond légèrement différent pour faire ressortir le glass */
+      background: linear-gradient(to top, rgba(255,255,255,0.4), transparent);
+    }
+
+    .form-card {
+      max-width: 700px; margin: 0 auto;
+      /* GLASS EFFECT INTENSIFIED */
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 30px;
+      padding: 50px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
+    .field { display: flex; flex-direction: column; gap: 10px; }
+
+    .field-label {
+      font-size: 0.9rem; font-weight: 600; color: var(--clr-dark);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .field-label svg { color: var(--clr-primary); width: 16px; }
+
+    .field-input, .field-select {
+      border: 1px solid rgba(0,0,0,0.1); 
+      background: rgba(255,255,255,0.6);
+      border-radius: 12px;
+      padding: 14px 18px; font-size: 0.95rem; font-family: var(--font-sans);
+      color: var(--clr-fg); outline: none;
+      transition: all 0.3s;
+    }
+    .field-input:focus, .field-select:focus {
+      background: white;
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.1);
+    }
+
+    .pills { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 35px; }
+    .pill {
+      padding: 12px 28px; border-radius: 50px;
+      border: 1px solid rgba(0,0,0,0.1);
+      font-size: 0.9rem; font-weight: 500; cursor: pointer;
+      background: rgba(255,255,255,0.5); color: var(--clr-muted);
+      transition: all 0.3s;
+    }
+    .pill.active, .pill:hover {
+      background: var(--clr-primary);
+      color: white;
+      border-color: var(--clr-primary);
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+    }
+
+    .btn-confirm {
+      width: 100%; 
+      background: linear-gradient(135deg, var(--clr-primary), #ff9eb5);
+      color: white;
+      border: none; padding: 18px; border-radius: 50px;
+      font-size: 1.1rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255, 105, 180, 0.5); }
+
+    /* ════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════ */
+   footer {
+  background: rgba(78, 18, 40, 0.75);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 80px 60px 30px;
+  position: relative;
+  z-index: 10;
+}
+    
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 60px; margin-bottom: 60px;
+      max-width: 1300px; margin-left: auto; margin-right: auto;
+    }
+
+    .footer-logo {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700;
+      color: white; text-decoration: none; margin-bottom: 20px;
+    }
+    
+
+    .social-links { display: flex; gap: 15px; margin-top: 25px; }
+    .social-links a {
+      width: 45px; height: 45px;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; transition: all 0.3s;
+    }
+    .social-links a:hover {
+      background: var(--clr-primary); border-color: var(--clr-primary);
+      transform: translateY(-3px);
+    }
+
+    .footer-col h4 { color: white; font-size: 1rem; margin-bottom: 25px; letter-spacing: 0.05em; }
+    .footer-col ul { list-style: none; }
+    .footer-col li {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.95rem; margin-bottom: 15px;
+    }
+    .footer-col li svg { color: var(--clr-white); width: 18px; }
+
+    .footer-bottom {
+      text-align: center; padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.85rem; color: rgba(255,255,255,0.6);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 0 24px; min-height: auto; padding-top: 60px; padding-bottom: 60px;}
+      .hero-title { font-size: 3rem; }
+      section { padding: 60px 24px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .form-card { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Conteneur d'animation des bulles (ARRIÈRE-PLAN) -->
+  <div class="bubbles-container" id="bubblesContainer"></div>
+
+  <!-- ═══ NAVBAR GLASS ═══ -->
+  <nav class="glass-effect">
+    <a class="nav-logo" href="#">
+      <span class="logo-icon"><i data-lucide="scissors"></i></span>
+      Belle &amp; Chic
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">Accueil</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#reservation">Rendez-vous</a></li>
+      <li><a href="#footer">Contact</a></li>
+    </ul>
+    <button class="btn-nav" onclick="location.href='#reservation'">Réserver</button>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero" id="accueil">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-tag">Salon de Beauté Premium</span>
+      <h1 class="hero-title">Sublimez votre <br/><em>Naturel</em></h1>
+      <p class="hero-sub">Une expérience unique où modernité et élégance se rencontrent. Coiffure, soins et maquillage par des experts passionnés.</p>
+      <div class="hero-cta">
+        <a class="btn-primary" href="#reservation">
+          <i data-lucide="calendar-check"></i> Prendre Rendez-vous
+        </a>
+        <a class="btn-ghost" href="#services">
+          <i data-lucide="sparkles"></i> Découvrir
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SERVICES ═══ -->
+  <section id="services">
+    <div class="section-header">
+      <span class="section-eyebrow">Excellence & Soins</span>
+      <h2 class="section-title">Nos Prestations</h2>
+      <p class="section-subtitle">Des moments de détente absolue dans un cadre moderne et apaisant.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <!-- Coiffure -->
+      <div class="service-card">
+        <div class="service-head">
+          <div class="svc-icon"><i data-lucide="scissors"></i></div>
+          <div class="svc-title">Coiffure & Style</div>
+        </div>
+        <ul class="svc-list">
+          <li class="svc-item"><span>Coupe Femme Trendy</span><span class="svc-price">45€</span></li>
+          <li class="svc-item"><span>Brushing Volumateur</span><span class="svc-price">30€</span></li>
+          <li class="svc-item"><span>Coloration Bio</span><span class="svc-price">65€</span></li>
+          <li class="svc-item"><span>Balayage Californien</span><span class="svc-price">85€</span></li>
+          <li class="svc-item"><span>Soin Kératine</span><span class="svc-price">120€</span></li>
+        </ul>
+      </div>
+
+      <!-- Manucure -->
+      <div class="service-card">
+        <div class="service-head">
+          <div class="svc-icon"><i data-lucide="hand-metal"></i></div>
+          <div class="svc-title">Manucure</div>
+        </div>
+        <ul class="svc-list">
+          <li class="svc-item"><span>Manucure Russe</span><span class="svc-price">35€</span></li>
+          <li class="svc-item"><span>Pose Gel UV</span><span class="svc-price">50€</span></li>
+          <li class="svc-item"><span>Nail Art Minimaliste</span><span class="svc-price">15€</span></li>
+          <li class="svc-item"><span>Soin Paraffine</span><span class="svc-price">20€</span></li>
+        </ul>
+      </div>
+
+      <!-- Pédicure -->
+      <div class="service-card">
+        <div class="service-head">
+          <div class="svc-icon"><i data-lucide="footprints"></i></div>
+          <div class="svc-title">Pédicure Spa</div>
+        </div>
+        <ul class="svc-list">
+          <li class="svc-item"><span>Beauté des Pieds</span><span class="svc-price">40€</span></li>
+          <li class="svc-item"><span>Gommage & Soin</span><span class="svc-price">55€</span></li>
+          <li class="svc-item"><span>Vernis Permanent</span><span class="svc-price">35€</span></li>
+        </ul>
+      </div>
+
+      <!-- Maquillage -->
+      <div class="service-card">
+        <div class="service-head">
+          <div class="svc-icon"><i data-lucide="wand-sparkles"></i></div>
+          <div class="svc-title">Maquillage</div>
+        </div>
+        <ul class="svc-list">
+          <li class="svc-item"><span>Make-up Jour / Soir</span><span class="svc-price">55€</span></li>
+          <li class="svc-item"><span>Mariée (Essai inclus)</span><span class="svc-price">150€</span></li>
+          <li class="svc-item"><span>Cours Particulier</span><span class="svc-price">80€</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ RESERVATION ═══ -->
+  <section id="reservation">
+    <div class="section-header">
+      <span class="section-eyebrow">Votre Moment</span>
+      <h2 class="section-title">Réservation</h2>
+    </div>
+
+    <div class="form-card">
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label"><i data-lucide="user"></i> Nom complet</label>
+          <input class="field-input" type="text" placeholder="Jane Doe"/>
+        </div>
+        <div class="field">
+          <label class="field-label"><i data-lucide="smartphone"></i> Téléphone</label>
+          <input class="field-input" type="tel" placeholder="06 12 34 56 78"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label"><i data-lucide="calendar-days"></i> Date souhaitée</label>
+          <input class="field-input" type="date"/>
+        </div>
+        <div class="field">
+          <label class="field-label"><i data-lucide="clock"></i> Heure</label>
+          <select class="field-select">
+            <option value="">Choisir un créneau</option>
+            <option>09:00</option><option>10:00</option>
+            <option>11:00</option><option>14:00</option>
+            <option>15:00</option><option>16:00</option>
+            <option>17:00</option><option>18:00</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 15px; font-weight:600; font-size:0.9rem;">Type de soin :</div>
+      <div class="pills">
+        <button class="pill active" onclick="selectPill(this)">Coiffure</button>
+        <button class="pill" onclick="selectPill(this)">Ongles</button>
+        <button class="pill" onclick="selectPill(this)">Maquillage</button>
+        <button class="pill" onclick="selectPill(this)">Autre</button>
+      </div>
+
+      <button class="btn-confirm">
+        <i data-lucide="check-circle-2"></i> Confirmer ma demande
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer id="footer">
+    <div class="footer-grid">
+      <div>
+        <a class="footer-logo" href="#">
+          <span class="logo-icon"></span>
+          Belle &amp; Chic
+        </a>
+        <p style="line-height:1.7; opacity:0.8;">L'adresse beauté incontournable pour celles qui veulent rayonner au quotidien.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-tiktok"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Le Salon</h4>
+        <ul>
+          <li><i data-lucide="map-pin"></i> 12 Avenue des Champs, Paris</li>
+          <li><i data-lucide="phone"></i> 01 44 55 66 77</li>
+          <li><i data-lucide="mail"></i> contact@bellechic.fr</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Horaires</h4>
+        <ul>
+          <li><i data-lucide="sun"></i> Lun – Ven : 9h – 20h</li>
+          <li><i data-lucide="cloud-sun"></i> Samedi : 9h – 19h</li>
+          <li><i data-lucide="moon"></i> Dimanche : Fermé</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Belle &amp; Chic. Design Moderne & Glass Effect.
+    </div>
+  </footer>
+
+  <script>
+    // Initialisation des icônes
+    lucide.createIcons();
+
+    // Gestion des boutons "Pills"
+    function selectPill(el) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+    }
+    
+    // Animation des bulles (Background)
+    function createBubbles() {
+      const container = document.getElementById('bubblesContainer');
+      const bubbleCount = 25; // Nombre raisonnable pour ne pas surcharger
+        
+      for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+          
+        // Taille aléatoire
+        const size = Math.random() * 80 + 20;
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+          
+        // Position horizontale
+        bubble.style.left = Math.random() * 100 + '%';
+          
+        // Vitesse et délai
+        const duration = Math.random() * 10 + 10; // Entre 10 et 20s (plus lent = plus classe)
+        bubble.style.animationDuration = duration + 's';
+        const delay = Math.random() * 10;
+        bubble.style.animationDelay = delay + 's';
+          
+        container.appendChild(bubble);
+      }
+    }
+    
+    window.addEventListener('load', createBubbles);
+  </script>
+</body>
+</html>
